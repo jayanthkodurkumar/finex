@@ -6,9 +6,9 @@
 
 
 # Node.js dependencies
-node_modules/
-npm-debug.log
-yarn-error.log
+backend/node_modules/
+backend/npm-debug.log
+backend/yarn-error.log
 
 # Environment variables
-.env
+backend/.env
