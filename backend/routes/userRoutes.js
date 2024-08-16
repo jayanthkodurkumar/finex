@@ -20,7 +20,7 @@ router.get("/profile", protect, (req, res) => {
 });
 
 // delete user
-router.delete("/deleteaccount" ,protect, deleteUserAccount)
+router.delete("/profile" ,protect, deleteUserAccount)
 
 
 
