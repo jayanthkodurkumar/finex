@@ -3,6 +3,7 @@ const dotenv = require("dotenv")
 const connectDB = require("./config")
 
 const userRoutes = require("./routes/userRoutes")
+const expenseRoutes = require("./routes/expenseRoutes");
 
 dotenv.config()
 
@@ -22,6 +23,7 @@ app.get("/", (req, res) => {
 
 // try to use user routes
 app.use("/api/users", userRoutes); 
+app.use("/api/expenses", expenseRoutes); 
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
