@@ -1,7 +1,7 @@
 // TODO: /signup and /login API
 
 const express = require("express");
-const { registerUser, loginUser } = require("../controller/userController");
+const { registerUser, loginUser, deleteUserAccount } = require("../controller/userController");
 const { protect } = require("../middleware/authMiddleware");
 const router = express.Router();
 
@@ -18,6 +18,9 @@ router.post("/login", loginUser);
 router.get("/profile", protect, (req, res) => {
   res.json(req.user);
 });
+
+// delete user
+router.delete("/deleteaccount" ,protect, deleteUserAccount)
 
 
 

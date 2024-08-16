@@ -57,6 +57,22 @@ const loginUser = async(req, res) => {
 };
 
 
+// delete user
+
+const deleteUserAccount = async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  await User.deleteOne(user);
+
+  res.status(200).json({ message: "User account deleted successfully" });
+};
+
+
+
 // Generate JWT token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -64,4 +80,5 @@ const generateToken = (id) => {
   });
 };
 
-module.exports = { registerUser,loginUser };
+
+module.exports = { registerUser,loginUser,deleteUserAccount };
