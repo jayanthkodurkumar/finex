@@ -20,6 +20,11 @@ const LoginPage = () => {
     navigate("/");
   };
 
+   const handleRegisterClick = () => {
+     navigate("/register"); // Navigate to the register page
+   };
+
+
   return (
     <Container
       className="d-flex justify-content-center align-items-center"
@@ -55,6 +60,11 @@ const LoginPage = () => {
 
             <Button variant="primary" type="submit" className="w-100">
               Login
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={handleRegisterClick}
+              className="w-100 mt-3"> New user? Sign Up here
             </Button>
           </Form>
         </Col>

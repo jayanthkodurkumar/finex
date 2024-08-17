@@ -7,6 +7,7 @@ const AuthContext = createContext();
 
 // Create the AuthProvider component
 const AuthProvider = ({ children }) => {
+  const [name, setName] = useState(null);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   
@@ -34,9 +35,11 @@ const AuthProvider = ({ children }) => {
       );
 
       const { data } = response;
+      const usernameData = { name: data.name }; 
       const userData = { email: data.email }; 
       const tokenData = data.token; 
 
+      setName(usernameData)
       setUser(userData);
       setToken(tokenData);
       localStorage.setItem("user", JSON.stringify(userData));
@@ -57,8 +60,24 @@ const AuthProvider = ({ children }) => {
     
   };
 
+  // detle prof
+
+  const deleteUserProfile = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      await axios.delete("http://localhost:5000/api/users/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+    } catch (error) {
+      throw new Error("Failed to delete profile");
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{name, user, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

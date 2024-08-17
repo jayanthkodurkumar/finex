@@ -1,41 +1,33 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../context/AuthContext'
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { ExpenseContext } from '../context/ExpenseContext';
+import { ExpenseContext } from "../context/ExpenseContext";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import ListGroup from "react-bootstrap/ListGroup";
+import Table from "react-bootstrap/Table";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
-   
-  useEffect( () => {
-    // Check if user exists in localStorage or context
+  const { user, logout } = useContext(AuthContext);
+
+  useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (!storedUser) {
-      
       navigate("/login");
     }
-  }, []);
+  }, [navigate]);
 
-
-  
-
-  const { expenses,addExpense, loading, error, deleteExpense, updateExpense } =
+  const { expenses, addExpense, loading, error, deleteExpense, updateExpense } =
     useContext(ExpenseContext);
-  //  console.log(expenses)
+
   const [newExpenseData, setNewExpenseData] = useState({
     description: "",
     amount: "",
     category: "",
-  }); // For adding new expenses
-
-
-  
+  });
 
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
@@ -61,16 +53,13 @@ const HomePage = () => {
     }));
   };
 
-
-const handleNewExpenseChange = (e) => {
-  const { name, value } = e.target;
-  setNewExpenseData((prevData) => ({
-    ...prevData,
-    [name]: value,
-  }));
-};
-
-
+  const handleNewExpenseChange = (e) => {
+    const { name, value } = e.target;
+    setNewExpenseData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   const handleAddExpense = (e) => {
     e.preventDefault();
@@ -93,10 +82,6 @@ const handleNewExpenseChange = (e) => {
     return <div>Error: {error}</div>;
   }
 
-  if (!expenses || expenses.length === 0) {
-    return <div>No expenses found. Please add some expenses.</div>;
-  }
-
   const handleLogout = async () => {
     await logout();
     navigate("/login");
@@ -104,11 +89,10 @@ const handleNewExpenseChange = (e) => {
 
   return (
     <>
-    {}
       <Container className="my-5">
         <Row className="mb-4">
-          <Col md={6}>
-            <h2 className="mb-4">Add Expense</h2>
+          <Col md={6} className="mx-auto">
+            <h2 className="mb-4 text-center">Add Expense</h2>
             <Form onSubmit={handleAddExpense}>
               <Form.Group className="mb-3">
                 <Form.Label>Description</Form.Label>
@@ -146,98 +130,110 @@ const handleNewExpenseChange = (e) => {
                   required
                 />
               </Form.Group>
-              <Button type="submit" variant="success" className="btn-block">
-                Add Expense
-              </Button>
+              <div className="d-flex justify-content-center mt-5">
+                <Button type="submit" variant="success" className="text-center">
+                  Add Expense
+                </Button>
+              </div>
             </Form>
           </Col>
         </Row>
 
-        <h2 className="mb-4">Expenses</h2>
-        <ListGroup>
-          {expenses.map((expense) => (
-            <ListGroup.Item
-              key={expense._id}
-              className="d-flex justify-content-between align-items-center"
-            >
-              {editingId === expense._id ? (
-                <Form onSubmit={handleUpdate} className="w-100">
-                  <Row>
-                    <Col md={4}>
-                      <Form.Control
-                        type="text"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleInputChange}
-                        placeholder="Description"
-                        required
-                      />
-                    </Col>
-                    <Col md={3}>
-                      <Form.Control
-                        type="number"
-                        name="amount"
-                        value={formData.amount}
-                        onChange={handleInputChange}
-                        placeholder="Amount"
-                        required
-                      />
-                    </Col>
-                    <Col md={3}>
-                      <Form.Control
-                        type="text"
-                        name="category"
-                        value={formData.category}
-                        onChange={handleInputChange}
-                        placeholder="Category"
-                        required
-                      />
-                    </Col>
-                    <Col md={2}>
-                      <Button variant="success" type="submit" className="mr-2">
-                        Save
-                      </Button>
-                      <Button
-                        variant="danger"
-                        onClick={() => setEditingId(null)}
-                      >
-                        Cancel
-                      </Button>
-                    </Col>
-                  </Row>
-                </Form>
-              ) : (
-                <>
-                  <div>
-                    {expense.description} - ${expense.amount} (
-                    {expense.category})
-                  </div>
-                  <div>
-                    <Button
-                      variant="warning"
-                      className="me-2"
-                      onClick={() => startEditing(expense)}
-                    >
-                      Update
-                    </Button>
-                    <Button
-                      variant="danger"
-                      onClick={() => deleteExpense(expense._id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </>
-              )}
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
-        <Button variant="danger" className="mt-4" onClick={handleLogout}>
-          Sign Out
-        </Button>
+        <h2 className="mt-5 mb-4 text-center">Your Expenses</h2>
+        {!expenses || expenses.length === 0 ? (
+          <div>No expenses found. Please add some expenses.</div>
+        ) : (
+          <Table striped bordered hover responsive className="text-center">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {expenses.map((expense) => (
+                <tr key={expense._id}>
+                  {editingId === expense._id ? (
+                    <>
+                      <td>
+                        <Form.Control
+                          type="text"
+                          name="description"
+                          value={formData.description}
+                          onChange={handleInputChange}
+                          placeholder="Description"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <Form.Control
+                          type="number"
+                          name="amount"
+                          value={formData.amount}
+                          onChange={handleInputChange}
+                          placeholder="Amount"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <Form.Control
+                          type="text"
+                          name="category"
+                          value={formData.category}
+                          onChange={handleInputChange}
+                          placeholder="Category"
+                          required
+                        />
+                      </td>
+                      <td>
+                        <Button
+                          variant="success"
+                          onClick={handleUpdate}
+                          className="me-2"
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          variant="danger"
+                          onClick={() => setEditingId(null)}
+                        >
+                          Cancel
+                        </Button>
+                      </td>
+                    </>
+                  ) : (
+                    <>
+                      <td>{expense.description}</td>
+                      <td>${expense.amount}</td>
+                      <td>{expense.category}</td>
+                      <td>
+                        <Button
+                          variant="warning"
+                          className="me-2"
+                          onClick={() => startEditing(expense)}
+                        >
+                          Update
+                        </Button>
+                        <Button
+                          variant="danger"
+                          onClick={() => deleteExpense(expense._id)}
+                        >
+                          Delete
+                        </Button>
+                      </td>
+                    </>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+        
       </Container>
     </>
   );
-}
+};
 
-export default HomePage
+export default HomePage;

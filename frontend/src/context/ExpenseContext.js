@@ -1,9 +1,10 @@
-import React, { createContext, useState, useEffect,  } from "react";
+import React, { createContext, useState, useEffect, useContext,  } from "react";
 import axios from "axios";
+import { AuthContext } from "./AuthContext";
 
 
 const ExpenseContext = createContext();
-  
+
 
 // Define the initial state
 const initialState = {
@@ -13,23 +14,29 @@ const initialState = {
 };
 
 const ExpenseProvider = ({ children }) => {
-  
   const [state, setState] = useState(initialState);
+  const { user } = useContext(AuthContext); // Get user from AuthContext
+
   const authToken = localStorage.getItem("token");
 
   const fetchExpenses = async () => {
-    setState({ ...state, loading: true });
-    try {
-      
-      // console.log(authToken)
-      const response = await axios.get("http://localhost:5000/api/expenses", {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
-      setState({ ...state, expenses: response.data, loading: false });
-    } catch (error) {
-      setState({ ...state, error: "Failed to fetch expenses", loading: false });
+    if (user) {
+      setState({ ...state, loading: true });
+      try {
+        // console.log(authToken)
+        const response = await axios.get("http://localhost:5000/api/expenses", {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        setState({ ...state, expenses: response.data, loading: false });
+      } catch (error) {
+        setState({
+          ...state,
+          error: "Failed to fetch expenses",
+          loading: false,
+        });
+      }
     }
   };
 
@@ -50,16 +57,14 @@ const ExpenseProvider = ({ children }) => {
 
   const deleteExpense = async (id) => {
     try {
-      console.log(id)
+      console.log(id);
       await axios.delete(`http://localhost:5000/api/expenses/${id}`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      setState(
-        {
-          ...state,
-          expenses: state.expenses.filter((expense) => expense._id !== id),
-        }
-      );
+      setState({
+        ...state,
+        expenses: state.expenses.filter((expense) => expense._id !== id),
+      });
     } catch (error) {
       setState({ ...state, error: "Failed to delete expense" });
     }
@@ -88,7 +93,7 @@ const ExpenseProvider = ({ children }) => {
   // Step 3: Handle side effects using useEffect
   useEffect(() => {
     fetchExpenses();
-  }, []);
+  }, [user]);
 
   // Step 4: Return UI with all the above as props and {children}
   return (
