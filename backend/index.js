@@ -1,4 +1,6 @@
 const express = require("express")
+const cors = require("cors");
+
 const dotenv = require("dotenv")
 const connectDB = require("./config")
 
@@ -8,6 +10,10 @@ const expenseRoutes = require("./routes/expenseRoutes");
 dotenv.config()
 
 const app = express()
+
+app.use(cors());
+
+
 // body parser for json req
 app.use(express.json())
 
