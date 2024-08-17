@@ -10,5 +10,9 @@ backend/node_modules/
 backend/npm-debug.log
 backend/yarn-error.log
 
+frontend/node_modules/
+
 # Environment variables
 backend/.env
+
+.DS_Store
