@@ -34,8 +34,8 @@ const AuthProvider = ({ children }) => {
       );
 
       const { data } = response;
-      const userData = { email: data.email }; // Adjust based on your API response
-      const tokenData = data.token; // JWT token from your API
+      const userData = { email: data.email }; 
+      const tokenData = data.token; 
 
       setUser(userData);
       setToken(tokenData);
