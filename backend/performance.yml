@@ -1,0 +1,55 @@
+config:
+  target: 'http://localhost:5000'
+  phases:
+    - duration: 10
+      arrivalRate: 10
+  processor: './customFunctions.js'
+
+scenarios:
+  - flow:
+      - function: "generateUserData"
+
+      - post:
+          url: "/api/users/signup"
+          json:
+            name: "{{ name }}"
+            email: "{{ email }}"
+            password: "{{ password }}"
+          capture:
+            json: "$._id"  
+            as: "userId"
+
+      - post:
+          url: "/api/users/login"
+          json:
+            email: "{{ email }}"
+            password: "{{ password }}"
+          capture:
+            json: "$.token"  
+            as: "authToken"
+
+      - function: "generateExpenses"
+
+      
+      - post:
+          url: "/api/expenses"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            user: "{{ userId }}"
+            description: "{{ description }}"
+            amount: "{{ amount }}"
+            date: "{{ date }}"
+            category: "{{ category }}"
+
+      - get:
+          url: "/api/expenses"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          qs:
+            user: "{{ userId }}"  
+
+
+
+
+
